@@ -12,14 +12,15 @@ return new class extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();               // Unique ID for each product
-            $table->string('name');      // Product name (e.g., Pizza, Laptop)
-            $table->decimal('price', 10, 2);  // Price of the product
-            $table->text('description');      // Description of the product
-            $table->foreignId('store_id')     // Foreign key linking to stores table
-                  ->constrained()            // Automatically links to stores.id
-                  ->onDelete('cascade');     // If a store is deleted, delete its products too
-            $table->timestamps();          // Created_at and updated_at columns
+            $table->id();                   
+            $table->foreignId('store_id')     
+                  ->constrained()            
+                  ->onDelete('cascade');  
+                  $table->string('name');     
+                  $table->decimal('price', 10, 2);  
+                  $table->text('description');
+                  $table->integer('stock');   
+            $table->timestamps();         
         });
     }
     

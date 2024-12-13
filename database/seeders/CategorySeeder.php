@@ -10,12 +10,12 @@ class CategorySeeder extends Seeder
 {
     public function run()
     {
-        // Predefined categories
+        
         $categories = [
             'Food', 'Electronics', 'Fashion', 'Books', 'Home Appliances', 'Furniture', 'Sports', 'Toys'
         ];
 
-        // Insert predefined categories into the database
+
         foreach ($categories as $category) {
             Category::create(['name' => $category]);
         }

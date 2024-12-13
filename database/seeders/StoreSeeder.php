@@ -14,7 +14,6 @@ class StoreSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // Predefined stores for each category
         $stores = [
             'Food' => ['Pizza Hut', 'McDonald\'s', 'Starbucks', 'Subway'],
             'Electronics' => ['Best Buy', 'Apple Store', 'Samsung', 'GameStop'],
@@ -22,18 +21,17 @@ class StoreSeeder extends Seeder
             'Books' => ['Barnes & Noble', 'Books-A-Million', 'Waterstones'],
             'Home Appliances' => ['Home Depot', 'Lowe\'s', 'Target'],
             'Furniture' => ['IKEA', 'Ashley Furniture', 'Wayfair'],
-            'Sports' => ['Dick\'s Sporting Goods', 'Sports Authority'],
+            'Sports' => ['Sports Authority'],
             'Toys' => ['Toys R Us', 'Target', 'Walmart'],
         ];
 
-        // Create stores for each category
         foreach ($stores as $categoryName => $storeNames) {
             $category = Category::where('name', $categoryName)->first();
 
             foreach ($storeNames as $storeName) {
                 Store::create([
                     'name' => $storeName,
-                    'category_id' => $category->id,  // Link to category
+                    'category_id' => $category->id, 
                 ]);
             }
         }
