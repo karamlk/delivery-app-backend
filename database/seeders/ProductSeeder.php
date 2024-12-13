@@ -14,7 +14,7 @@ class ProductSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // Predefined products for each store
+       
         $products = [
             'Pizza Hut' => [
                 ['name' => 'Neapolitan Pizza', 'price' => 10.99],
@@ -31,10 +31,10 @@ class ProductSeeder extends Seeder
                 ['name' => 'Nike Hoodie', 'price' => 49.99],
                 ['name' => 'Nike Running Shorts', 'price' => 29.99]
             ],
-            // Add more stores and their respective products...
+           
         ];
 
-        // Create products for each store
+      
         foreach ($products as $storeName => $productList) {
             $store = Store::where('name', $storeName)->first();
 
@@ -42,8 +42,8 @@ class ProductSeeder extends Seeder
                 Product::create([
                     'name' => $product['name'],
                     'price' => $product['price'],
-                    'description' => $faker->sentence,  // Generate a random description
-                    'store_id' => $store->id,  // Link to store
+                    'description' => $faker->sentence,  
+                    'store_id' => $store->id, 
                 ]);
             }
         }
