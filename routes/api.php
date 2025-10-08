@@ -14,7 +14,6 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\StoreController;
 
-//Displaying categories,stores and products, with cart routes and search
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{categoryId}/stores', [StoreController::class, 'index']);
@@ -22,57 +21,32 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/stores/{storeId}/products/{productId}', [ProductController::class, 'show']);
 
     //To show x number of products at the home page
-    Route::get('/home/products', [ProductController::class, 'home']); 
+    Route::get('/home/products', [ProductController::class, 'home']);
 
-    Route::post('/cart', [CartController::class, 'add']);
+    Route::post('/cart', [CartController::class, 'store']);
     Route::put('/cart/{cartItemId}', [CartController::class, 'update']);
     Route::delete('/cart/{cartItemId}', [CartController::class, 'destroy']);
     Route::get('/cart', [CartController::class, 'index']);
 
     Route::get('/search', SearchController::class);
-});
 
-//Order routes
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/orders', [OrderController::class, 'index']);
+     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{orderId}', [OrderController::class, 'show']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::delete('/orders/{orderId}', [OrderController::class, 'destroy']);
 
-    Route::get('/orders/{orderId}/items/{itemId}', [OrderItemController::class, 'show']);
-    Route::put('/orders/{orderId}/items/{itemId}', [OrderItemController::class, 'update']);
-    Route::delete('/orders/{orderId}/items/{itemId}', [OrderItemController::class, 'destroy']);
-});
+    Route::get('/items/{itemId}', [OrderItemController::class, 'show']);
+    Route::put('/items/{itemId}', [OrderItemController::class, 'update']);
+    Route::delete('/items/{itemId}', [OrderItemController::class, 'destroy']);
 
-//Favorite routes
-Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'getProfile']);
+    Route::get('/profile/photos', [ProfileController::class, 'getProfilePhotos']);
+    Route::put('/profile/photo', [ProfileController::class, 'updateProfilePhoto']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites', [FavoriteController::class, 'destroy']);
-});
-
-
-// Profile routes    
-Route::middleware('auth:sanctum')->group(function () {
-    // Get the authenticated user's profile data
-    Route::get('/profile', [ProfileController::class, 'getProfile']);
-
-    // Get the list of available profile photos
-    Route::get('/profile/photos', [ProfileController::class, 'getProfilePhotos']);
-
-    Route::put('/profile/photo', [ProfileController::class, 'updateProfilePhoto']);
-
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
-
-    Route::put('/profile/first-name', [ProfileController::class, 'updateFirstName']);
-
-    Route::put('/profile/last-name', [ProfileController::class, 'updateLastName']);
-
-    Route::put('/profile/email', [ProfileController::class, 'updateEmail']);
-
-    Route::put('/profile/phone-number', [ProfileController::class, 'updatePhoneNumber']);
-
-    Route::put('/profile/location', [ProfileController::class, 'updateLocation']);
 });
 
 Route::post('/register', [RegisterController::class, 'register']);
@@ -80,9 +54,3 @@ Route::post('/verify-otp', [RegisterController::class, 'verifyOtp'])->middleware
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
-
-//An endpoint that returns the IP address of the server 
-//to get the current backend IP and use it for subsequent API requests.
-// Route::get('/config', function () {
-//     return response()->json(['backend_ip' => request()->getHost()]);
-// });

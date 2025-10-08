@@ -3,15 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cart;
+use App\Http\Resources\CartItemResource;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function index()
+    {
+        $cartItems = CartItem::with('product')
+            ->where('user_id', auth('sanctum')->id())
+            ->get();
+        return CartItemResource::collection($cartItems);
+    }
 
-    public function add(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
@@ -24,23 +31,14 @@ class CartController extends Controller
             return response()->json(['message' => 'Not enough stock', 'available_stock' => $product->stock], 400);
         }
 
-        $cartItem = CartItem::create([
+        CartItem::create([
             'user_id' => auth('sanctum')->id(),
             'product_id' => $product->id,
             'quantity' => $request->quantity,
         ]);
 
-        return response()->json($cartItem, 201);
+        return response()->json(['message' => 'Product added to cart successfully.'], 201);
     }
-
-    public function index()
-    {
-        $cartItems = CartItem::with('product')
-            ->where('user_id', auth('sanctum')->id())
-            ->get();
-        return response()->json($cartItems);
-    }
-
 
     public function update(Request $request, $cartItemId)
     {
@@ -59,7 +57,7 @@ class CartController extends Controller
             'quantity' => $request->quantity,
         ]);
 
-        return response()->json($cartItem);
+        return new CartItemResource($cartItem);
     }
 
     public function destroy($cartItemId)

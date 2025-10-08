@@ -3,46 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductResource;
-use App\Models\Order;
+use App\Http\Resources\OrderItemResource;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 
 class OrderItemController extends Controller
 {
-    public function show($orderId, $itemId)
+    public function show($itemId)
     {
-        $order = Order::where('id', $orderId)->where('user_id',  auth('sanctum')->id())->first();
-
-        if (!$order) {
-            return response()->json(['message' => 'Order not found or not owned by the user'], 404);
-        }
-
-        $orderItem = $order->items()->where('id', $itemId)->first();
+        $orderItem = OrderItem::with('product')
+            ->where('id', $itemId)->first();
 
         if (!$orderItem) {
-            return response()->json(['message' => 'Order item not found'], 404);
+            return response()->json(['message' => 'item not found or not owned by the user'], 404);
         }
 
-        return response()->json([
-            'order_item' => $orderItem,
-            'product' => new ProductResource($orderItem->product),
-            'quantity' => $orderItem->quantity,
-            'price' => $orderItem->price,
-        ]);
+        return new OrderItemResource($orderItem);
     }
 
-
-    public function update($orderId, $itemId, Request $request)
+    public function update($itemId, Request $request)
     {
-        $order = Order::where('id', $orderId)
-            ->where('user_id', auth('sanctum')->id())
+        $orderItem = OrderItem::with('product')->where('id', $itemId)
             ->first();
+
+        $order = $orderItem->order;
 
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
-
-        $orderItem = $order->items()->where('id', $itemId)->first();
 
         if (!$orderItem) {
             return response()->json(['message' => 'Order item not found'], 404);
@@ -72,19 +60,15 @@ class OrderItemController extends Controller
         } else {
             $product->decrement('stock', $quantityDiff);
         }
-
-        return response()->json($order);
+        return new OrderItemResource($orderItem);
     }
 
-    public function destroy($orderId, $itemId)
+    public function destroy($itemId)
     {
-        $order = Order::where('id', $orderId)->where('user_id',  auth('sanctum')->id())->first();
+        $orderItem = OrderItem::where('id', $itemId)
+            ->first();
 
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
-        }
-
-        $orderItem = $order->items()->where('id', $itemId)->first();
+        $order = $orderItem->order;
 
         if (!$orderItem) {
             return response()->json(['message' => 'Order item not found'], 404);
@@ -100,6 +84,10 @@ class OrderItemController extends Controller
         $product = $orderItem->product;
         $product->increment('stock', $orderItem->quantity);
 
-        return response()->json($order);
+        return response()->json(
+            [
+                'message' => 'the item got deleted successfully'
+            ]
+        );
     }
 }

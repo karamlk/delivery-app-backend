@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderItemResource;
+use App\Http\Resources\OrderResource;
 use App\Models\CartItem;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -19,22 +21,24 @@ class OrderController extends Controller
             return response()->json(['message' => 'No orders found'], 404);
         }
 
-        return response()->json($orders);
+        return OrderResource::collection($orders);
     }
 
 
     public function show($orderId)
     {
-        $order = Order::with('items.product')
+        $order = Order::with(['user','items.product'])
             ->where('id', $orderId)
             ->where('user_id',  auth('sanctum')->id())
             ->first();
+
+        $orderItems = $order->items;
 
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
 
-        return response()->json($order);
+        return  OrderItemResource::collection($orderItems);
     }
 
     public function store()
@@ -75,7 +79,9 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return response()->json($order, 201);
+            return response()->json([
+                'message' => 'order has been added successfully'
+            ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Order creation failed', 'error' => $e->getMessage()], 500);
