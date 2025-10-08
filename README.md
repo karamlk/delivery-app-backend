@@ -6,33 +6,33 @@ A RESTful API backend for a delivery application, built using **Laravel**. This 
 
 ##  Features
 
--  **Authentication**
+- **Authentication**
   - User registration and login
   - OTP email verification via **Gmail SMTP**
   - Token-based API security (Laravel Sanctum)
 
--  **User Profile**
+- **User Profile**
   - View and update profile info
   - Upload or change avatar image
 
--  **Product Browsing**
+- **Product Browsing**
   - Browse product categories
   - View stores under each category
   - Browse products in a store
   - View product details
   - Search by product or store name
 
--  **Favorites**
+- **Favorites**
   - Add/remove products to/from favorites
   - View favorites by product category
 
--  **Cart & Orders**
+- **Cart & Orders**
   - Add/remove/edit products in the cart
   - Place new orders
   - Edit or cancel orders
   - View past orders
 
--  **Stock Handling**
+- **Stock Handling**
   - Product stock is updated when:
     - An order is delivered
     - An order is canceled or removed
