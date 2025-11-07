@@ -1,6 +1,8 @@
 #  Delivery App – Laravel REST API Backend
 
-A RESTful API backend for a delivery application, built using **Laravel**. This API allows users to browse products by category and store, manage their profiles, place and edit orders, maintain a favorites list, and verify their account via OTP email using **Gmail SMTP**. Laravel Sanctum is used for secure token-based authentication.
+A RESTful API backend for a delivery application, built using **Laravel**. This API allows users to browse products by category and store, manage their profiles, place and edit orders, maintain a favorites list, and verify their account via OTP email using **Gmail SMTP**.    
+Laravel Sanctum is used for secure token-based authentication,
+and the system also supports **Redis** queues for handling background jobs (like OTP emails and notifications) and **Laravel Horizon** for monitoring and managing queued jobs.
 
 ---
 
@@ -37,12 +39,18 @@ A RESTful API backend for a delivery application, built using **Laravel**. This 
     - An order is delivered
     - An order is canceled or removed
 
+- **Background Jobs**
+  - Queued email sending via Redis Queue
+  - Queue monitoring with Laravel Horizon    
+
 ---
 
 ##  Tech Stack
 
 - **Laravel 11**
 - **MySQL**
+- **Redis** (for queue processing)
+- **Laravel Horizon** (queue monitoring dashboard)
 - **Laravel Sanctum**
 - **Gmail SMTP** (OTP delivery)
 - **Postman** (API testing)
@@ -58,7 +66,7 @@ A RESTful API backend for a delivery application, built using **Laravel**. This 
 
 ---
 
-### ⚙️ installation
+### ⚙️ Installation
 
 ## 1. Clone the Repository
 
@@ -110,11 +118,35 @@ php artisan migrate
 php artisan db:seed
 ```
 
-### 6. Serve Locally
+### 6. Start Services
+
+Make sure Redis is running:
+
+```bash
+sudo service redis-server start
+```
+Then run the Laravel server:
 
 ```bash
 php artisan serve
 ```
+
+### 7. Start Queue Worker or Horizon
+
+You can use either:
+- Basic queue worker:
+
+```bash
+php artisan queue:work
+```
+
+- Or start Laravel Horizon (recommended):
+```bash
+php artisan horizon
+```
+Visit the Horizon dashboard at:
+http://localhost:8000/horizon
+
 ---
 
 ## 🖼️ Image Note
