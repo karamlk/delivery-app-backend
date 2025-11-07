@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendOtpJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -38,22 +39,22 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        $defaultAvatar = UserPhoto::find(11); 
+        $defaultAvatar = UserPhoto::find(11);
 
         if ($defaultAvatar) {
             $user->profile_photo = $defaultAvatar->photo_url;
         }
-        
+
         $otp = rand(100000, 999999);
         $hashedOtp = bcrypt($otp);
         $otpExpiry = Carbon::now()->addMinutes(10);
-        
+
         $user->otp = $hashedOtp;
         $user->otp_expiry = $otpExpiry;
         $user->save();
 
 
-        Mail::to($user->email)->send(new SendOtpMail($otp));
+        SendOtpJob::dispatch($user->email, (string)$otp);
 
         return response()->json([
             'message' => 'User created successfully. Please verify your email.',
